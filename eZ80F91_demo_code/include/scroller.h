@@ -1,0 +1,1 @@
+void scroller_render( void );
