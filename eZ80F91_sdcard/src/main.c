@@ -1,7 +1,23 @@
 #include "gen_defines.h"
-#include "mod_player.h"
-#include "fire.h"
-#include "scroller.h"
+#include "driver_sd.h"
+#include "fat_filelib.h"
+
+// PORTS LAYOUT
+//
+// PA0 VINT Video INTerrupt
+// PA1 AINT Audio INTerrupt
+//
+
+// PB0 PAGE video PAGE select
+// PB1 CD		sd/mmc Card Detect
+// PB2 SS   spi Slave Select (pulled high)
+// PB3 SCK  sd/mmc Serial ClocK
+// PB4 CS   sd/mmc Chip Select
+// PB5 WP   sd/mmc Write Protected
+// PB6 MISO sd/mmc Master In, Slave Out
+// PB7 MOSI sd/mmc Master Out, Slave In
+//
+// PC1 MID  MIDi in (uart1 rx)
 
 // GENERAL MEMORY LAYOUT
 //
@@ -85,8 +101,6 @@ void audio_isr( void ) {
   // Read interrupt state (clear timer interrupt)
   irq = dma[ 0 ].irq;
   if( irq == 0x00 ) {
-    // Groove...
-    play_module();
     // Timer interrupt
     irq = dma[ 0 ].irq;
   }
@@ -99,6 +113,8 @@ void main( void ) {
   u8  t;
 	u16 p;
 	u24 n;
+	struct fs_dir_list_status dirstat;
+	struct fs_dir_ent         dirent;
 
   int_disable;
 
@@ -112,39 +128,45 @@ void main( void ) {
   PA_DDR  = 0x00;
   PA_ALT0 = 0x03;
 
-	PB_DR   = 0x00;
-	PB_ALT2 = 0x00;
+	PB_DR   = 0x10;
+	PB_ALT2 = 0xCC;
 	PB_ALT1 = 0x00;
-	PB_DDR  = 0x00;
-	PB_ALT0 = 0x01;
+	PB_DDR  = 0xEE;
+
+	PC_DR   = 0x00;
+	PC_ALT2 = 0x02;
+	PC_ALT1 = 0x00;
+	PC_DDR  = 0x02;
 
 	// Register interrupts
   _set_vector( PA0_IVECT, video_isr );
   _set_vector( PA1_IVECT, audio_isr );
 
-	// Initialize fire effect
-	fire_init();
+  //int_enable;
+	sd_init();
+	sd_open();
 
-	// Load ProTracker MOD
-  //mod_data_reset();
-  //load_module( mod_data_read );
+	fl_init();
+	if( fl_attach_media( sd_fatlib_read, sd_fatlib_write ) != FAT_INIT_OK ) {
+		asm( "NOP" );
+	}
 
-  int_enable;
-
-	while( 1 ) {
-		if( need_render ) {
-			// Render fire
-			fire_render();
-			// Render scroller
-			scroller_render();
-			// Render logo
-			for( n = 0; n < 29; n++ ) {
-				video_ram[ 0xAB3 	+ logo[ n ] ].rgb = 0;
+	if( fl_list_opendir( "/DCIM/", &dirstat ) ) {
+		while( fl_list_readdir( &dirstat, &dirent ) ) {
+			asm( "NOP" );
+			/*if (dirent.is_dir)
+			{
+				FAT_PRINTF(("%d - %s <DIR> (0x%08lx)\r\n",++filenumber, dirent.filename, dirent.cluster));
 			}
-			// Trigger page-flip
-			need_render = 0;
+			else
+			{
+				FAT_PRINTF(("%d - %s [%d bytes] (0x%08lx)\r\n",++filenumber, dirent.filename, dirent.size, dirent.cluster));
+			}*/
 		}
 	}
+
+
+	while( 1 );
 
 }
 

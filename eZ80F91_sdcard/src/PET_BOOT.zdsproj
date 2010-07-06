@@ -5,14 +5,15 @@
 <files>
 <file filter-key="">.\main.c</file>
 <file filter-key="flash">.\ez80f91_demo_platform.hex</file>
-<file filter-key="">.\driver_flash.c</file>
 <file filter-key="">.\memory.asm</file>
-<file filter-key="">.\mod_player.c</file>
-<file filter-key="">.\fire.c</file>
-<file filter-key="">.\firefast.asm</file>
-<file filter-key="">.\scroller.c</file>
-<file filter-key="">font\zuul.c</file>
-<file filter-key="">.\scrollerfast.asm</file>
+<file filter-key="">.\DRIVER_SD.C</file>
+<file filter-key="">..\..\eZ80F91\fatlib\src\fat_access.c</file>
+<file filter-key="">..\..\eZ80F91\fatlib\src\FAT_FILELIB.C</file>
+<file filter-key="">..\..\eZ80F91\fatlib\src\FAT_MISC.C</file>
+<file filter-key="">..\..\eZ80F91\fatlib\src\FAT_STRING.C</file>
+<file filter-key="">..\..\eZ80F91\fatlib\src\fat_table.c</file>
+<file filter-key="">..\..\eZ80F91\fatlib\src\fat_write.c</file>
+<file filter-key="">..\include\fat_opts.h</file>
 </files>
 
 <!-- configuration information -->
@@ -158,7 +159,7 @@
 <option name="promote" type="boolean" change-action="compile">true</option>
 <option name="reduceopt" type="boolean" change-action="compile">false</option>
 <option name="stdinc" type="string" change-action="compile"></option>
-<option name="usrinc" type="string" change-action="compile">..\include</option>
+<option name="usrinc" type="string" change-action="compile">..\include; ..\..\ez80f91\fatlib\include</option>
 <option name="watch" type="boolean" change-action="none">false</option>
 </options>
 </tool>
@@ -247,10 +248,31 @@
 
 <!-- watch information -->
 <watch-elements>
+<watch-element expression="tmp" />
+<watch-element expression="addr" />
+<watch-element expression="arg" />
+<watch-element expression="crc" />
+<watch-element expression="&addr" />
+<watch-element expression="block" />
+<watch-element expression="dirent" />
 </watch-elements>
 
 <!-- breakpoint information -->
 <breakpoints>
+<breakpoint temporary="false" enabled="true" >
+<line-number>151</line-number>
+<pathname>C:\projects\other\PET-GCM\eZ80F91_sdcard\src\main.c</pathname>
+<address>873</address>
+<command></command>
+<preserve-type>0</preserve-type>
+</breakpoint>
+<breakpoint temporary="false" enabled="true" >
+<line-number>156</line-number>
+<pathname>C:\projects\other\PET-GCM\eZ80F91_sdcard\src\main.c</pathname>
+<address>899</address>
+<command></command>
+<preserve-type>0</preserve-type>
+</breakpoint>
 </breakpoints>
 
 </project>
